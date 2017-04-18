@@ -33,11 +33,12 @@ contract BaseToken is
   function isContract(address client)
     private constant returns (bool result)
   {
+    uint code_size;
     assembly {
-      result := not(iszero(extcodesize(client)))
+      code_size := extcodesize(client)
     }
+    result = code_size != 0;
   }
-
   function notifyReceiver(
     address from, address to, uint value, bytes data) private
   {
@@ -46,7 +47,6 @@ contract BaseToken is
         .tokenFallback(msg.sender, value, data);
     }
   }
-
   function balanceOf(address _owner)
     public constant returns (uint balance)
   {
