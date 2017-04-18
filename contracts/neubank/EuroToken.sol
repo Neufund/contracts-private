@@ -42,7 +42,7 @@ contract EuroToken is Owned, BaseToken("NEUR", "Neu Euro", 59) {
     function deposit(address client, uint256 amount)
         external
         deposit_manager_only
-        assert_client(msg.sender)
+        assert_client(client)
     {
         mint(client, amount);
         Transfer(0, client, amount);
