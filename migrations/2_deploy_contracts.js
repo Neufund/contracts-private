@@ -21,6 +21,7 @@ module.exports = (deployer) => {
     EthEurTrader,
     LimitedPartnerAgreement,
     Neumark,
+  //  EuroHelper,
   ];
   deployer.deploy(contracts);
 };

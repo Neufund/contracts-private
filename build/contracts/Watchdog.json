@@ -5,19 +5,6 @@
       "constant": false,
       "inputs": [
         {
-          "name": "cond",
-          "type": "bool"
-        }
-      ],
-      "name": "assert",
-      "outputs": [],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
           "name": "wallet",
           "type": "address"
         }
@@ -211,5 +198,5 @@
   ],
   "networks": {},
   "schema_version": "0.0.5",
-  "updated_at": 1491214404927
+  "updated_at": 1492593172024
 }

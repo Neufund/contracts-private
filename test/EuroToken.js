@@ -2,6 +2,7 @@
 
 const EuroToken = artifacts.require('../../contracts/neubank/EuroToken.sol');
 const ClientRegistery = artifacts.require('../../contracts/neubank/ClientRegistery.sol');
+const EuroHelper = artifacts.require('./helpers/EuroHelper.sol');
 
 import expectThrow from './helpers/expectThrow';
 
@@ -17,6 +18,10 @@ contract('EuroToken', (accounts) => {
   let someone3;
   //ClientRegistery contract
   let clientreg;
+  let dumContract;
+  let Dummy;
+  const toPromise = f => ((...args) => (new Promise((resolve, reject) => (f(...args, (error, data) => (error ? reject(error) : resolve(data)))))));
+
   beforeEach(async() => {
 
     //Setup new token
@@ -28,10 +33,13 @@ contract('EuroToken', (accounts) => {
     someone2  = accounts[2];
     someone3  = accounts[3];
 
+    dumContract = await EuroHelper.new();
+    Dummy = await dumContract.address;
     //Setup clientRegistery contract with clients
     clientreg = await ClientRegistery.new();
     await clientreg.addClient(someone1);
     await clientreg.addClient(someone3);
+    await clientreg.addClient(Dummy);
     assert(await clientreg.isClient(someone1));
     //someone2 is not a client
     assert(!await clientreg.isClient(someone2));
@@ -42,31 +50,50 @@ contract('EuroToken', (accounts) => {
 
   });
 
-    it('should set user someone1 as deposit_manager then change to owner', async () =>  {
-     assert(await eurotoken.set_deposit_manager(owner));
-     assert(await eurotoken.deposit(someone1,1));
-     assert(await eurotoken.set_deposit_manager(someone1));
-     assert(await eurotoken.deposit(someone1,1, {from: someone1}));
-     await expectThrow(eurotoken.deposit(someone1,1));
-     assert(await eurotoken.set_deposit_manager(owner));
-     assert(await eurotoken.deposit(someone1,1));
+     it('should set user someone1 as deposit_manager then change to owner', async () =>  {
+      assert(await eurotoken.set_deposit_manager(owner));
+      assert(await eurotoken.deposit(someone1,1));
+      assert(await eurotoken.set_deposit_manager(someone1));
+      assert(await eurotoken.deposit(someone1,1, {from: someone1}));
+      await expectThrow(eurotoken.deposit(someone1,1));
+      assert(await eurotoken.set_deposit_manager(owner));
+      assert(await eurotoken.deposit(someone1,1));
+    });
+
+     it('should deposit 10 nEuro to clients only', async () => {
+      assert(await eurotoken.set_deposit_manager(owner));
+      assert(await eurotoken.deposit(someone1,10,{from: owner}));
+      await expectThrow(eurotoken.deposit(someone2,10,{from: owner}));
+      assert(await eurotoken.deposit(someone3,10,{from: owner}));
+      let balance = await eurotoken.balanceOf(someone3);
+      assert.equal(balance.c,10);
    });
 
-    it('should deposit 10 nEuro to clients only', async () => {
+     it('should withdraw if its a client with sufficiant funds', async () => {
      assert(await eurotoken.set_deposit_manager(owner));
-     assert(await eurotoken.deposit(someone1,10,{from: owner}));
-     await expectThrow(eurotoken.deposit(someone2,10,{from: owner}));
      assert(await eurotoken.deposit(someone3,10,{from: owner}));
-     let balance = await eurotoken.balanceOf(someone3);
-     assert.equal(balance.c,10);
+     await expectThrow(eurotoken.withdraw(15,{from: someone3}));
+     assert(await eurotoken.withdraw(10,{from: someone3}));
   });
 
-    it('should withdraw if its a client with sufficiant funds', async () => {
+    it('should deposit money to a client contract', async () => {
     assert(await eurotoken.set_deposit_manager(owner));
-    assert(await eurotoken.deposit(someone3,10,{from: owner}));
-    await expectThrow(eurotoken.withdraw(15,{from: someone3}));
-    assert(await eurotoken.withdraw(10,{from: someone3}));
-    await
+    //moneyFilter.watch(()=>{});
+    let test = await eurotoken.deposit(Dummy,10,{from: owner});
+    //moneyFilter.get(console.log);
+    //moneyFilter.stopWatching();
+    //await new Promise(resolve => (setTimeout(resolve, 3000)));
+    let moneyFilter = dumContract.Money();
+    await new Promise(resolve => {
+      moneyFilter.watch((err, data)=>{
+        console.log(err, data);
+        assert.equal(data.event,'Money');
+        moneyFilter.stopWatching(resolve);
+      });
   });
-//TODD: Create a test contract to test notify-user 
+
+  //await expectThrow(eurotoken.withdraw(15,{from: someone3}));
+  //assert(await eurotoken.withdraw(10,{from: someone3}));
+});
+//TODD: Create a test contract to test notify-user
 });
