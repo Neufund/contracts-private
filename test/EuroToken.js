@@ -76,24 +76,17 @@ contract('EuroToken', (accounts) => {
      assert(await eurotoken.withdraw(10,{from: someone3}));
   });
 
-    it('should deposit money to a client contract', async () => {
+    it('should deposit money to a client contract and contract receives a fallback', async () => {
     assert(await eurotoken.set_deposit_manager(owner));
-    //moneyFilter.watch(()=>{});
     let test = await eurotoken.deposit(Dummy,10,{from: owner});
-    //moneyFilter.get(console.log);
-    //moneyFilter.stopWatching();
-    //await new Promise(resolve => (setTimeout(resolve, 3000)));
     let moneyFilter = dumContract.Money();
     await new Promise(resolve => {
       moneyFilter.watch((err, data)=>{
-        console.log(err, data);
         assert.equal(data.event,'Money');
+        assert(!err);
         moneyFilter.stopWatching(resolve);
       });
   });
 
-  //await expectThrow(eurotoken.withdraw(15,{from: someone3}));
-  //assert(await eurotoken.withdraw(10,{from: someone3}));
 });
-//TODD: Create a test contract to test notify-user
 });
