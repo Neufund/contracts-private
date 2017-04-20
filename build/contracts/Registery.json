@@ -173,8 +173,49 @@
       "links": {},
       "address": "0x33e1ef249961172364f497ece21f610edc584c34",
       "updated_at": 1491215213876
+    },
+    "1492690297780": {
+      "events": {
+        "0x7cbe00258cd5670c808f2116fb86564f7f5717eef219817bc486add91c9ab7ca": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "old_owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "new_owner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipNominated",
+          "type": "event"
+        },
+        "0x0d18b5fd22306e373229b9439188228edca81207d1667f604daf6cef8aa3ee67": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "old_owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "new_owner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransfered",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x7ec05aef4efaa0e4ce0f087ea35ae2115508137a",
+      "updated_at": 1492690512857
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1492593172024
+  "updated_at": 1492690512857
 }

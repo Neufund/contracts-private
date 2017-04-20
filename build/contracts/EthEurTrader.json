@@ -203,8 +203,66 @@
       },
       "updated_at": 1491215213886,
       "address": "0xfeb1d5b757a40ad0f1fc71c1306ace85a890f4df"
+    },
+    "1492690297780": {
+      "events": {
+        "0x85177f287940f2f05425a4029951af0e047a7f9c4eaa9a6e6917bcd869f86695": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "client",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "EthReceived",
+          "type": "event"
+        },
+        "0x7cbe00258cd5670c808f2116fb86564f7f5717eef219817bc486add91c9ab7ca": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "old_owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "new_owner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipNominated",
+          "type": "event"
+        },
+        "0x0d18b5fd22306e373229b9439188228edca81207d1667f604daf6cef8aa3ee67": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "old_owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "new_owner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransfered",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf549c921dff3e086ea1f517282b42cfd5603eea0",
+      "updated_at": 1492690512866
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1492593172019
+  "updated_at": 1492690512866
 }

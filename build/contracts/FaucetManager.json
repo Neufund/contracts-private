@@ -182,8 +182,49 @@
       },
       "updated_at": 1491215213859,
       "address": "0x39d500b58b8749fbd30df7f391f2849dc25228ad"
+    },
+    "1492690297780": {
+      "events": {
+        "0x7cbe00258cd5670c808f2116fb86564f7f5717eef219817bc486add91c9ab7ca": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "old_owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "new_owner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipNominated",
+          "type": "event"
+        },
+        "0x0d18b5fd22306e373229b9439188228edca81207d1667f604daf6cef8aa3ee67": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "old_owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "new_owner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransfered",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x7711269977e32c2b8ab5aae6f78fa23aa9724024",
+      "updated_at": 1492690512861
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1492593172019
+  "updated_at": 1492690512861
 }
