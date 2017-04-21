@@ -6,20 +6,19 @@ import "../faucet/Faucet.sol";
 contract NeukeyNotary is Owned {
 
   struct deviceInfo {
-    uint32 device_id;
-    address pub_key;
+    uint32 deviceId;
+    address pubKey;
     uint128 owner; //
+    bool userConfirm;
   }
 
   address private notary;
   Faucet private faucet;
-  mapping (address => bool) deprecated;
 
-  mapping (address => deviceInfo) devicesByPubkey;
-  mapping (uint32 => uint32) devicesByDeviceId;
-  mapping (uint128 => uint32) devicesByOwner;
+  mapping (uint32 => bool) deprecated;
+  mapping (uint32 => deviceInfo) devicesById;
 
-  deviceInfo[] devices;
+  deviceInfo[] devices; //should all stored data be put here?
 
   modifier notaryOnly() {
     if(msg.sender == notary) {
@@ -27,83 +26,79 @@ contract NeukeyNotary is Owned {
     }
   }
 
-
+  //Notary or owner??
   function set_faucet(Faucet faucet_) external notaryOnly {
     faucet = faucet_;
   }
 
-  //Does the owner have ultimate control?
   function set_notary(address notary_) external owner_only {
-    notary = notary_;
-  }
-
-  //Should the Notary have the right to change owner?
-  function set_notary_(address notary_) external notaryOnly {
     notary = notary_;
   }
 
   function registerNano(address nanoPubKey, uint32 deviceId)
       external notaryOnly
   {
-    if(devicesByPubkey[nanoPubKey].device_id != 0) {
-//      DeviceAlreadyRegistered(nanoPubKey, deviceId);
-      throw; //safe?
-    }
-    devicesByPubkey[nanoPubKey] = deviceInfo(deviceId,nanoPubKey,0);
+    if(devicesById[deviceId].deviceId != 0)
+      throw;
+    devicesById[deviceId] = deviceInfo(deviceId,nanoPubKey,0,false);
     DeviceRegistered(nanoPubKey,deviceId);
   }
 
-  function activateNano(address nanoPubKey, uint128 ownerId)
+  function activateNano(uint32 deviceId, uint128 ownerId)
       external notaryOnly
   {
-    if(devicesByPubkey[nanoPubKey].owner != 0) {
-  //      DeviceAlreadyActivated(nanoPubKey, devicesByPubkey[nanoPubKey].device_id);
-        throw; //safe?
-    }
-    devicesByPubkey[nanoPubKey].owner = ownerId;
-    DeviceActivated(nanoPubKey,devicesByPubkey[nanoPubKey].device_id);
+    if(devicesById[deviceId].owner != 0 ||
+       devicesById[deviceId].pubKey == 0 ||
+       devicesById[deviceId].deviceId == 0)
+        throw;
+    devicesById[deviceId].owner = ownerId;
+    DeviceActivated(devicesById[deviceId].pubKey,deviceId);
+    //faucet.register(devicesById[deviceId].pubKey);
   }
 
-    function sendToOwner(address nanoPubKey, uint device_id, uint32 owner_id)
-        external
-        notaryOnly
-    {
-        faucet.register(nanoPubKey);
-    }
+  function confirmNano(uint32 deviceId)
+  {
+    if(msg.sender != devicesById[deviceId].pubKey ||
+       devicesById[deviceId].owner == 0 ||
+       devicesById[deviceId].userConfirm == true)
+        throw;
+    devicesById[deviceId].userConfirm = true;
+  }
 
-  function deprecate(address nanoPubKey)
+  function deprecate(uint32 deviceId)
     external notaryOnly
   {
-    if(deprecated[nanoPubKey] == true) {
-  //    DeviceAlreadyDeprecated(nanoPubKey);
-      throw; //safe?
-    }
-    deprecated[nanoPubKey] = true;
-//    faucet.unregister(nanoPubKey);
-    DeviceDeprecated(nanoPubKey,devicesByPubkey[nanoPubKey].device_id);
+    if(deprecated[deviceId] == true)
+      throw;
+    deprecated[deviceId] = true;
+    //faucet.unregister(nanoPubKey); LOOK AT ME!!
+    DeviceDeprecated(devicesById[deviceId].pubKey,deviceId);
     //!!!What if the user loses it for two days and finds it
-    delete devicesByPubkey[nanoPubKey];
+    delete devicesById[deviceId];
   }
 
-  function is_registered(address pubKey) constant external returns (bool) {
-    return (devicesByPubkey[pubKey].device_id== 0) ? false : true;
+  function is_registered(uint32 deviceId) constant external returns (bool) {
+    return (devicesById[deviceId].deviceId == 0) ? false : true;
   }
 
-  function is_active(address pubKey) constant external returns (bool) {
-    return (devicesByPubkey[pubKey].owner== 0) ? false : true;
+  function is_active(uint32 deviceId) constant external returns (bool) {
+    return (devicesById[deviceId].owner == 0) ? false : true;
   }
 
-  function device_id(address pubKey) constant external returns (uint32) {
-    return devicesByPubkey[pubKey].device_id;
+  function is_confirmed(uint32 deviceId) constant external returns (bool) {
+    return (devicesById[deviceId].userConfirm == false) ? false : true;
   }
 
-//If using Throw Already events are useless
-  event DeviceRegistered(address nanoPubKey, uint device_id);
-  event DeviceSend(address nanoPubKey, uint device_id);
-  event DeviceAlreadyRegistered(address nanoPubKey, uint device_id);
-  event DeviceAlreadyActivated(address nanoPubKey, uint device_id);
-  event DeviceActivated(address nanoPubKey, uint device_id);
-  event DeviceDeprecated(address nanoPubKey, uint device_id);
-  event DeviceAlreadyDeprecated(address nanoPubKey);
+  function pubKey(uint32 deviceId) constant external returns (address) {
+    return devicesById[deviceId].pubKey;
+  }
+
+  event DeviceRegistered(address nanoPubKey, uint deviceId);
+  event DeviceSend(address nanoPubKey, uint deviceId);
+  event DeviceActivated(address nanoPubKey, uint deviceId);
+  event DeviceDeprecated(address nanoPubKey, uint deviceId);
+
   // TODO: An enabled device is ellegible for the Faucet contract
+  //     : Anything facuet related
+  //
 }
