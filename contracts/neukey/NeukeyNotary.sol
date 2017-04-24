@@ -1,3 +1,12 @@
+/*Nano ledger can have diffrent states:
+        1-Unregistered: Nano taken out of the box
+        2-Register: Nano's DeviceID and Publickey are stored with (registerNano) "Notary"
+        3-Activate: An owner with OwnerID is assigned to Nano by notary (activateNano) "Notary"
+        4-Confirm: An owner Confirms receiving the Nano (confirmNano) "Client"
+        5-Deprecate: In case Nano is lost or stolen Owner reports to Notary and Nano "Notary"
+        gets disabled (deprecate)
+*/
+
 pragma solidity ^0.4.8;
 
 import "../lib/Owned.sol";
@@ -15,7 +24,8 @@ contract NeukeyNotary is Owned {
   address private notary;
   Faucet private faucet;
 
-  mapping (uint32 => bool) deprecated;
+  mapping (address => uint32) devicesByPubkey;
+  mapping (address => bool) deprecated;
   mapping (uint32 => deviceInfo) devicesById;
 
   deviceInfo[] devices; //should all stored data be put here?
@@ -26,8 +36,7 @@ contract NeukeyNotary is Owned {
     }
   }
 
-  //Notary or owner??
-  function set_faucet(Faucet faucet_) external notaryOnly {
+  function set_faucet(Faucet faucet_) external owner_only {
     faucet = faucet_;
   }
 
@@ -41,6 +50,7 @@ contract NeukeyNotary is Owned {
     if(devicesById[deviceId].deviceId != 0)
       throw;
     devicesById[deviceId] = deviceInfo(deviceId,nanoPubKey,0,false);
+    devicesByPubkey[nanoPubKey] = deviceId;
     DeviceRegistered(nanoPubKey,deviceId);
   }
 
@@ -56,13 +66,13 @@ contract NeukeyNotary is Owned {
     //faucet.register(devicesById[deviceId].pubKey);
   }
 
-  function confirmNano(uint32 deviceId)
+  function confirmNano()
   {
-    if(msg.sender != devicesById[deviceId].pubKey ||
-       devicesById[deviceId].owner == 0 ||
-       devicesById[deviceId].userConfirm == true)
+    if(msg.sender != devicesById[devicesByPubkey[msg.sender]].pubKey ||
+       devicesById[devicesByPubkey[msg.sender]].owner == 0 ||
+       devicesById[devicesByPubkey[msg.sender]].userConfirm == true)
         throw;
-    devicesById[deviceId].userConfirm = true;
+    devicesById[devicesByPubkey[msg.sender]].userConfirm = true;
   }
 
   function deprecate(uint32 deviceId)
@@ -74,6 +84,7 @@ contract NeukeyNotary is Owned {
     //faucet.unregister(nanoPubKey); LOOK AT ME!!
     DeviceDeprecated(devicesById[deviceId].pubKey,deviceId);
     //!!!What if the user loses it for two days and finds it
+    delete devicesByPubkey[devicesById[deviceId].pubKey];
     delete devicesById[deviceId];
   }
 
@@ -85,13 +96,17 @@ contract NeukeyNotary is Owned {
     return (devicesById[deviceId].owner == 0) ? false : true;
   }
 
-  function is_confirmed(uint32 deviceId) constant external returns (bool) {
-    return (devicesById[deviceId].userConfirm == false) ? false : true;
+  function nanoStates(uint32 deviceId) constant external returns (uint32, address
+      ,uint128, bool)
+  {
+    return (devicesById[deviceId].deviceId,devicesById[deviceId].pubKey,
+            devicesById[deviceId].owner,devicesById[deviceId].userConfirm);
   }
 
-  function pubKey(uint32 deviceId) constant external returns (address) {
-    return devicesById[deviceId].pubKey;
+  function is_confirmed(address Pubkey) constant external returns (bool) {
+    return (devicesById[devicesByPubkey[Pubkey]].userConfirm == false) ? false : true;
   }
+
 
   event DeviceRegistered(address nanoPubKey, uint deviceId);
   event DeviceSend(address nanoPubKey, uint deviceId);
@@ -99,6 +114,4 @@ contract NeukeyNotary is Owned {
   event DeviceDeprecated(address nanoPubKey, uint deviceId);
 
   // TODO: An enabled device is ellegible for the Faucet contract
-  //     : Anything facuet related
-  //
 }
