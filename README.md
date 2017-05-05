@@ -1,4 +1,6 @@
 # Contracts [![Build Status](https://travis-ci.org/Neufund/Contracts.svg?branch=master)](https://travis-ci.org/Neufund/Contracts)
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Neufund/contracts-private.svg?token=eed4b4c2552e2916a6094f2262231d9c1fe7d3c5c2a7efca019be2bbce44239b&ts=1493976140055)](https://greenkeeper.io/)
 Neufund smart contracts
 
 
