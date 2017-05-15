@@ -10,7 +10,7 @@
 pragma solidity ^0.4.8;
 
 import "../lib/Owned.sol";
-import "../faucet/Faucet.sol";
+//import "../faucet/Faucet.sol";
 
 contract NeukeyNotary is Owned {
 
@@ -22,7 +22,7 @@ contract NeukeyNotary is Owned {
   }
 
   address private notary;
-  Faucet private faucet;
+  //Faucet private faucet;
 
   mapping (address => uint32) devicesByPubkey;
   mapping (address => bool) deprecated;
@@ -36,9 +36,9 @@ contract NeukeyNotary is Owned {
     }
   }
 
-  function set_faucet(Faucet faucet_) external owner_only {
+/*  function set_faucet(Faucet faucet_) external owner_only {
     faucet = faucet_;
-  }
+  }*/
 
   function set_notary(address notary_) external owner_only {
     notary = notary_;
@@ -47,7 +47,7 @@ contract NeukeyNotary is Owned {
   function registerNano(address nanoPubKey, uint32 deviceId)
       external notaryOnly
   {
-    if(devicesById[deviceId].deviceId != 0)
+    if(devicesById[deviceId].deviceId != 0 || devicesByPubkey[nanoPubKey] !=0)
       throw;
     devicesById[deviceId] = deviceInfo(deviceId,nanoPubKey,0,false);
     devicesByPubkey[nanoPubKey] = deviceId;

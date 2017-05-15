@@ -61,7 +61,7 @@ contract('NeukeyNotary', (accounts) => {
       await expectThrow(neukeyNotary.confirmNano({from: someone2}));
       assert(await neukeyNotary.registerNano(someone2,deviceId2,{from: owner}));
       //If you try to confirm before activating a nano
-      await expectThrow(neukeyNotary.confirmNano({from: someone2}));
+      await expectThrow(neukeyNotconfirmNano({from: someone2}));
    });
     it('should deprecate a lost nano', async () =>  {
       assert(await neukeyNotary.registerNano(someone3,deviceId3,{from: owner}));
