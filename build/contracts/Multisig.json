@@ -5,14 +5,14 @@
       "constant": false,
       "inputs": [
         {
-          "name": "_id",
+          "name": "_h",
           "type": "bytes32"
         }
       ],
       "name": "confirm",
       "outputs": [
         {
-          "name": "_success",
+          "name": "",
           "type": "bool"
         }
       ],
@@ -38,10 +38,27 @@
       "name": "execute",
       "outputs": [
         {
-          "name": "_id",
+          "name": "",
           "type": "bytes32"
         }
       ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "name": "_to",
+          "type": "address"
+        }
+      ],
+      "name": "changeOwner",
+      "outputs": [],
       "payable": false,
       "type": "function"
     },
@@ -50,7 +67,24 @@
       "inputs": [
         {
           "indexed": false,
-          "name": "",
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Deposit",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "owner",
           "type": "address"
         },
         {
@@ -60,15 +94,84 @@
         },
         {
           "indexed": false,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
           "name": "data",
           "type": "bytes"
         }
       ],
-      "name": "Transaction",
+      "name": "SingleTransact",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "operation",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "MultiTransact",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "operation",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "initiator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "ConfirmationNeeded",
       "type": "event"
     }
   ],
   "networks": {},
   "schema_version": "0.0.5",
-  "updated_at": 1491214404926
+  "updated_at": 1492593172023
 }
