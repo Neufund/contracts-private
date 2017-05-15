@@ -9,7 +9,7 @@
 
 pragma solidity ^0.4.8;
 
-import "./lib/Owned.sol";
+import "../lib/Owned.sol";
 //import "../faucet/Faucet.sol";
 
 contract NeukeyNotary is Owned {
@@ -25,7 +25,7 @@ contract NeukeyNotary is Owned {
   //Faucet private faucet;
 
   mapping (address => uint32) devicesByPubkey;
-  mapping (address => bool) deprecated;
+  mapping (uint32 => bool) deprecated;
   mapping (uint32 => deviceInfo) devicesById;
 
   deviceInfo[] devices; //should all stored data be put here?
@@ -36,9 +36,9 @@ contract NeukeyNotary is Owned {
     }
   }
 
-/*  function set_faucet(Faucet faucet_) external owner_only {
-    faucet = faucet_;
-  }*/
+//  function set_faucet(Faucet faucet_) external owner_only {
+  //  faucet = faucet_;
+  //}
 
   function setNotary(address notary_) external owner_only {
     notary = notary_;
@@ -108,6 +108,10 @@ contract NeukeyNotary is Owned {
 
   function isActive(uint32 deviceId) constant external returns (bool) {
     return (devicesById[deviceId].owner == 0) ? false : true;
+  }
+
+  function isDeprecated(uint32 deviceId) constant external returns (bool) {
+    return (deprecated[deviceId] == true) ? true : false;
   }
 
   function nanoStates(uint32 deviceId) constant external returns (uint32, address
