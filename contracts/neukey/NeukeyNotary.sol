@@ -40,7 +40,7 @@ contract NeukeyNotary is Owned {
     faucet = faucet_;
   }*/
 
-  function set_notary(address notary_) external owner_only {
+  function setNotary(address notary_) external owner_only {
     notary = notary_;
   }
 
@@ -78,6 +78,7 @@ contract NeukeyNotary is Owned {
        devicesById[devicesByPubkey[msg.sender]].userConfirm == true)
         throw;
     devicesById[devicesByPubkey[msg.sender]].userConfirm = true;
+    DeviceConfirmed(devicesByPubkey[msg.sender], devicesById[devicesByPubkey[msg.sender]].deviceId);
   }
 
   function deprecate(uint32 deviceId)
@@ -89,17 +90,23 @@ contract NeukeyNotary is Owned {
     //faucet.unregister(nanoPubKey); LOOK AT ME!!
     DeviceDeprecated(devicesById[deviceId].pubKey,deviceId);
     //!!!What if the user loses it for two days and finds it
-    //devicesByPubkey[devicesById[deviceId].pubKey]=0;
-    //devicesById[deviceId]=deviceInfo(0,0,0,false);
     delete devicesByPubkey[devicesById[deviceId].pubKey];
     delete devicesById[deviceId];
   }
+  function unDeprecate(uint32 deviceId)
+    external owner_only
+  {
+   if(deprecated[deviceId] == false)
+      throw;
+    delete deprecated[deviceId];
+    DeviceUnDeprecated(deviceId);
+  }
 
-  function is_registered(uint32 deviceId) constant external returns (bool) {
+  function isRegistered(uint32 deviceId) constant external returns (bool) {
     return (devicesById[deviceId].deviceId == 0) ? false : true;
   }
 
-  function is_active(uint32 deviceId) constant external returns (bool) {
+  function isActive(uint32 deviceId) constant external returns (bool) {
     return (devicesById[deviceId].owner == 0) ? false : true;
   }
 
@@ -110,7 +117,7 @@ contract NeukeyNotary is Owned {
             devicesById[deviceId].owner,devicesById[deviceId].userConfirm);
   }
 
-  function is_confirmed(address Pubkey) constant external returns (bool) {
+  function isConfirmed(address Pubkey) constant external returns (bool) {
     return (devicesById[devicesByPubkey[Pubkey]].userConfirm == false) ? false : true;
   }
 
@@ -118,8 +125,10 @@ contract NeukeyNotary is Owned {
   event DeviceRegistered(address nanoPubKey, uint deviceId);
   event DeviceSend(address nanoPubKey, uint deviceId);
   event DeviceActivated(address nanoPubKey, uint deviceId);
+  event DeviceConfirmed(address nanoPubKey, uint deviceId);
   event DeviceDeprecated(address nanoPubKey, uint deviceId);
+  event DeviceUnDeprecated(uint deviceId);
 
   // TODO: An enabled device is ellegible for the Faucet contract
-  //       Disscuss more the idea of deprecation 
+  //       Disscuss more the idea of deprecation
 }
