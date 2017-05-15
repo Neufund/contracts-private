@@ -312,8 +312,83 @@
       },
       "updated_at": 1491215213865,
       "address": "0xc62502e2d13f62dbea91c4b6e3482e372af4667f"
+    },
+    "1492690297780": {
+      "events": {
+        "0x2a8c97f42d106ad000d498a1b6bf713a9365c4c1491e66fddb022f7ed07ab934": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "client",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "submission_hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Submitted",
+          "type": "event"
+        },
+        "0x7cbe00258cd5670c808f2116fb86564f7f5717eef219817bc486add91c9ab7ca": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "old_owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "new_owner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipNominated",
+          "type": "event"
+        },
+        "0x0d18b5fd22306e373229b9439188228edca81207d1667f604daf6cef8aa3ee67": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "old_owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "new_owner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransfered",
+          "type": "event"
+        },
+        "0x20628e08e5aabb4d0033fdf39ce214d8b24483924acea1be5c168206746d5a37": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "client",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "new_state",
+              "type": "uint8"
+            }
+          ],
+          "name": "StateChanged",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xb6641a558dba743c96b6dce7a231858fa3d215c8",
+      "updated_at": 1492690512858
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1492593172020
+  "updated_at": 1492690512858
 }
