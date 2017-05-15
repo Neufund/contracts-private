@@ -17,7 +17,7 @@ contract NeukeyNotary is Owned {
   struct deviceInfo {
     uint32 deviceId;
     address pubKey;
-    uint128 owner; //
+    uint128 owner; //why uint128
     bool userConfirm;
   }
 
@@ -27,6 +27,7 @@ contract NeukeyNotary is Owned {
   mapping (address => uint32) devicesByPubkey;
   mapping (uint32 => bool) deprecated;
   mapping (uint32 => deviceInfo) devicesById;
+  mapping (uint128 => bool) devicesByOwner;
 
   deviceInfo[] devices; //should all stored data be put here?
 
@@ -49,7 +50,8 @@ contract NeukeyNotary is Owned {
   {
     if(devicesById[deviceId].deviceId != 0 ||
         devicesByPubkey[nanoPubKey] !=0 ||
-          deprecated[deviceId] == true)
+          deprecated[deviceId] == true ||
+          deviceId == 0)
       throw;
     devicesById[deviceId] = deviceInfo(deviceId,nanoPubKey,0,false);
     devicesByPubkey[nanoPubKey] = deviceId;
@@ -62,9 +64,12 @@ contract NeukeyNotary is Owned {
     if(devicesById[deviceId].owner != 0 ||
        devicesById[deviceId].pubKey == 0 ||
        devicesById[deviceId].deviceId == 0 ||
-        deprecated[deviceId] == true)
+        deprecated[deviceId] == true ||
+        devicesByOwner[ownerId] == true ||
+        ownerId == 0 || deviceId == 0)
         throw;
     devicesById[deviceId].owner = ownerId;
+    devicesByOwner[ownerId] = true;
     DeviceActivated(devicesById[deviceId].pubKey,deviceId);
     //faucet.register(devicesById[deviceId].pubKey);
   }
@@ -84,7 +89,9 @@ contract NeukeyNotary is Owned {
   function deprecate(uint32 deviceId)
     external notaryOnly
   {
-   if(deprecated[deviceId] == true)
+   if(deprecated[deviceId] == true ||
+       devicesById[deviceId].deviceId == 0 ||
+       deviceId == 0)
       throw;
     deprecated[deviceId] = true;
     //faucet.unregister(nanoPubKey); LOOK AT ME!!
@@ -96,7 +103,8 @@ contract NeukeyNotary is Owned {
   function unDeprecate(uint32 deviceId)
     external owner_only
   {
-   if(deprecated[deviceId] == false)
+   if(deprecated[deviceId] == false ||
+       deviceId == 0)
       throw;
     delete deprecated[deviceId];
     DeviceUnDeprecated(deviceId);
@@ -135,4 +143,5 @@ contract NeukeyNotary is Owned {
 
   // TODO: An enabled device is ellegible for the Faucet contract
   //       Disscuss more the idea of deprecation
+  //       Add owner_id mapping and pubkey for registration check
 }

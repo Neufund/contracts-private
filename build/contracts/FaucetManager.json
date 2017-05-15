@@ -180,8 +180,8 @@
         }
       },
       "links": {},
-      "address": "0x8a11af988d69acdbd5568d3320a30efe991bda5d",
-      "updated_at": 1494852529829
+      "address": "0xbeb9695b9e766dcf64c8345a9ca878b6c54d2406",
+      "updated_at": 1494862787749
     },
     "42": {
       "links": {},
@@ -595,5 +595,5 @@
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1494852529829
+  "updated_at": 1494862787749
 }
