@@ -9,7 +9,7 @@
 
 pragma solidity ^0.4.8;
 
-import "../lib/Owned.sol";
+import "./lib/Owned.sol";
 //import "../faucet/Faucet.sol";
 
 contract NeukeyNotary is Owned {
@@ -47,7 +47,9 @@ contract NeukeyNotary is Owned {
   function registerNano(address nanoPubKey, uint32 deviceId)
       external notaryOnly
   {
-    if(devicesById[deviceId].deviceId != 0 || devicesByPubkey[nanoPubKey] !=0)
+    if(devicesById[deviceId].deviceId != 0 ||
+        devicesByPubkey[nanoPubKey] !=0 ||
+          deprecated[deviceId] == true)
       throw;
     devicesById[deviceId] = deviceInfo(deviceId,nanoPubKey,0,false);
     devicesByPubkey[nanoPubKey] = deviceId;
@@ -59,7 +61,8 @@ contract NeukeyNotary is Owned {
   {
     if(devicesById[deviceId].owner != 0 ||
        devicesById[deviceId].pubKey == 0 ||
-       devicesById[deviceId].deviceId == 0)
+       devicesById[deviceId].deviceId == 0 ||
+        deprecated[deviceId] == true)
         throw;
     devicesById[deviceId].owner = ownerId;
     DeviceActivated(devicesById[deviceId].pubKey,deviceId);
@@ -68,6 +71,8 @@ contract NeukeyNotary is Owned {
 
   function confirmNano()
   {
+    if(deprecated[devicesByPubkey[msg.sender]] == true)
+       throw;
     if(msg.sender != devicesById[devicesByPubkey[msg.sender]].pubKey ||
        devicesById[devicesByPubkey[msg.sender]].owner == 0 ||
        devicesById[devicesByPubkey[msg.sender]].userConfirm == true)
@@ -78,12 +83,14 @@ contract NeukeyNotary is Owned {
   function deprecate(uint32 deviceId)
     external notaryOnly
   {
-    if(deprecated[deviceId] == true)
+   if(deprecated[deviceId] == true)
       throw;
     deprecated[deviceId] = true;
     //faucet.unregister(nanoPubKey); LOOK AT ME!!
     DeviceDeprecated(devicesById[deviceId].pubKey,deviceId);
     //!!!What if the user loses it for two days and finds it
+    //devicesByPubkey[devicesById[deviceId].pubKey]=0;
+    //devicesById[deviceId]=deviceInfo(0,0,0,false);
     delete devicesByPubkey[devicesById[deviceId].pubKey];
     delete devicesById[deviceId];
   }
@@ -114,4 +121,5 @@ contract NeukeyNotary is Owned {
   event DeviceDeprecated(address nanoPubKey, uint deviceId);
 
   // TODO: An enabled device is ellegible for the Faucet contract
+  //       Disscuss more the idea of deprecation 
 }
