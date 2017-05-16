@@ -133,6 +133,10 @@ contract NeukeyNotary is Owned {
     return (devicesById[devicesByPubkey[Pubkey]].userConfirm == false) ? false : true;
   }
 
+  function isNotary() constant external returns (bool) {
+      return (msg.sender == notary) ? true : false;
+  }
+
 
   event DeviceRegistered(address nanoPubKey, uint deviceId);
   event DeviceSend(address nanoPubKey, uint deviceId);
