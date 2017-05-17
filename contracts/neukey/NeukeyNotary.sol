@@ -51,6 +51,7 @@ contract NeukeyNotary is Owned {
     if(devicesById[deviceId].deviceId != 0 ||
         devicesByPubkey[nanoPubKey] !=0 ||
           deprecated[deviceId] == true ||
+          deprecated[devicesByPubkey[nanoPubKey]] == true ||
           deviceId == 0)
       throw;
     devicesById[deviceId] = deviceInfo(deviceId,nanoPubKey,0,false);
@@ -65,6 +66,7 @@ contract NeukeyNotary is Owned {
        devicesById[deviceId].pubKey == 0 ||
        devicesById[deviceId].deviceId == 0 ||
         deprecated[deviceId] == true ||
+        deprecated[devicesByPubkey[nanoPubKey]] == true ||
         devicesByOwner[ownerId] == true ||
         ownerId == 0 || deviceId == 0)
         throw;
