@@ -73,3 +73,4 @@ https://blog.ethereum.org/2017/01/07/introduction-light-client-dapp-developers/
 TODO: ERC with `getLogEvents(logKeys[], uint firstBlock, uint lastBlock)`
 
 // See: https://ethereum.stackexchange.com/questions/9745/is-there-any-way-for-a-contract-to-know-when-it-gets-sent-a-token
+simple upload test
